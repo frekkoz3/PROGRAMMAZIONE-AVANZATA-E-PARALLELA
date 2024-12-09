@@ -104,10 +104,12 @@ class Polynomial:
 
 
 def newton_raphson(p, x, n_iter=20):
-  x_t = x
+  d = p.derivative()
   for i in range (n_iter):
-    x_t = x_t - (p(x_t)/p.derivative()(x_t))
-  return x_t
+    if d(x) == 0:
+      return x
+    x -= p(x)/d(x)
+  return x
 
 if __name__ == "__main__":
   p = Polynomial({4: 2, 3: 5, 1: 6, 0: -2})
