@@ -70,9 +70,9 @@ class Polynomial:
     if n < 0:
       raise TypeError('N must be positive')
     
-    pol = Polynomial(self.__coeffs)
-    for i in range (n-1):
-      pol = pol*pol
+    pol = Polynomial({0:1})
+    for i in range (n):
+      pol = pol * self
     
     return pol
 
