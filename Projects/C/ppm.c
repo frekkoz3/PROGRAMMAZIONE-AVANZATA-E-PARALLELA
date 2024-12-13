@@ -8,7 +8,6 @@
 int empty_image(char * path, ppm_ptr img, int width, int height)
 {
   /*
-
     Create an empty image and the open it
 
     parameters : 
@@ -18,7 +17,7 @@ int empty_image(char * path, ppm_ptr img, int width, int height)
         int height -> indicates the height (in pixel) of the image
     returns (int) : 
         it returns the error code raised by the function
-        0 : everything goes well
+        0 : everything went well
         -1 : problem occurred while opening the requested path with fopen in written+ mode
         others : refere to open image return error code 
     notes : 
@@ -41,7 +40,6 @@ int empty_image(char * path, ppm_ptr img, int width, int height)
 int map_image(char * path, ppm_ptr img)
 {
   /*
-
     Open an image an map it with mmap
     
     parameters : 
@@ -49,7 +47,7 @@ int map_image(char * path, ppm_ptr img)
         ppm_ptr img -> indicates the struct retaining the data for the image
     returns (int) : 
         it returns the error code raised by the function
-        0 : everything goes well
+        0 : everything went well
         -2 : problem occurred while opening the requested path with fopen in reading+ mode
         -3 : problem occurred while reading the header of the file
         -4 : problem occurred while mapping the file with mmap 
@@ -98,6 +96,7 @@ struct rgb * pixel_at(ppm_ptr img, int x, int y)
 
     notes :
         1*. equivalent to return &img->data[img->offset + y*img->width + x]
+
   */
   if (img == NULL){
     return NULL;
@@ -106,14 +105,29 @@ struct rgb * pixel_at(ppm_ptr img, int x, int y)
     return NULL;
   }
   
-  return &(img->data[img->offset + y*img->width + x]);
+  return img->data + img->offset + (y*img->width + x);
 }
 
 int close_image(ppm_ptr img)
 {
+  /*
+
+    Deallocate the img
+    
+    parameters : 
+        ppm_ptr img -> indicates the struct retaining the data for the image
+    returns (struct rgb *) : 
+        0 : everything went well
+        -1 : image is NULL or (x, y) are invalid coordinates
+
+    notes:
+        1.* : we have to remove the offset
+
+  */
   if (img == NULL){
-    return -4;
+    return -1;
   }
+  // 1*
   munmap(img->data, img->size);
   fclose(img->fd);
   return 0;
@@ -121,21 +135,39 @@ int close_image(ppm_ptr img)
 
 int main(){
 
-    ppm_ptr im;
-    char * path = "test.ppm";
-    int width = 100;
-    int height = 100;
-    int err = empty_image(path, im, width, height);
-    printf("size : %d \noffset : %d \nwidth : %d \nheight : %d", im->size, im->offset, im->width, im->height);
-    for (int x = 0; x < im->width; x++){
-      for (int y = 0; y < im->height; y++){
-          rgb * dest;
-          dest = pixel_at(im, x, y);
-          dest->r = 122;
-          dest->g = 122;
-          dest->b = 122;
+  // THERE'S A BUG TO FIX
+  // to see it just run this snippet and then look at the test.pgm img:
+  // it should be all of the same color (red for semplicity) but the upper corner is black
+    ppm im;
+    char * path = "test.pgm";
+    int width = 500;
+    int height = 505;
+    int err = empty_image(path, &im, width, height);
+    printf("WRITING SIDE \n");
+    printf("size : %d \noffset : %d \nwidth : %d \nheight : %d\n", im.size, im.offset, im.width, im.height);
+    for (int x = 0; x < im.width; x++){
+      for (int y = 0; y < im.height; y++){
+          rgb * dest = pixel_at(&im, x, y);
+          dest->r = 255;
+          dest->g = 0;
+          dest->b = 0;
+          if (dest->r == 0){
+            printf("<R : %u> at (X=%d;Y=%d)  \n", dest->r, x, y);
+          }
       }
     }
-    close_image(im);
+    close_image(&im);
+    err = map_image(path, &im);
+    printf("READING SIDE \n");
+    printf("size : %d \noffset : %d \nwidth : %d \nheight : %d\n", im.size, im.offset, im.width, im.height);
+    for (int x = 0; x < im.width; x++){
+      for (int y = 0; y < im.height; y++){
+          rgb * proof = pixel_at(&im, x, y);
+          if (proof->r == 0){
+            printf("<R : %u> at (X=%d;Y=%d) \n", proof->r, x, y);
+          }
+      }
+    }
+    close_image(&im);
     return 0;
 }
