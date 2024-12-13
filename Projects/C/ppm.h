@@ -2,6 +2,7 @@
 #define _PPM_H
 
 #include <stdio.h>
+#include <stdlib.h>
 
 typedef struct __attribute__ ((packed)) rgb {
     u_int8_t r;
