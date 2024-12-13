@@ -70,6 +70,8 @@ int map_image(char * path, ppm_ptr img)
     fclose(fd);
     return -3;
   }
+  //finding the offset
+  img->offset = ftell(fd);
   //mmaping the file 
   img->data = mmap(NULL, img->size, PROT_READ | PROT_WRITE, MAP_SHARED, fileno(fd), 0);
   if (img->data == MAP_FAILED) {
@@ -95,7 +97,7 @@ struct rgb * pixel_at(ppm_ptr img, int x, int y)
         NULL : image is NULL or (x, y) are invalid coordinates
 
     notes :
-        1*. equivalent to return &img->data[y*img->width + x]
+        1*. equivalent to return &img->data[img->offset + y*img->width + x]
   */
   if (img == NULL){
     return NULL;
@@ -104,18 +106,36 @@ struct rgb * pixel_at(ppm_ptr img, int x, int y)
     return NULL;
   }
   
-  return img->data + (y*img->width + x);
+  return &(img->data[img->offset + y*img->width + x]);
+}
+
+int close_image(ppm_ptr img)
+{
+  if (img == NULL){
+    return -4;
+  }
+  munmap(img->data, img->size);
+  fclose(img->fd);
+  return 0;
 }
 
 int main(){
 
-    struct rgb * p1;
-    
-    p1->r = 0;
-    p1->g = 0;
-    p1->b = 0;
-
-    printf("%u, %u, %u \n", p1->r, p1->g, p1->b);
-
+    ppm_ptr im;
+    char * path = "test.ppm";
+    int width = 100;
+    int height = 100;
+    int err = empty_image(path, im, width, height);
+    printf("size : %d \noffset : %d \nwidth : %d \nheight : %d", im->size, im->offset, im->width, im->height);
+    for (int x = 0; x < im->width; x++){
+      for (int y = 0; y < im->height; y++){
+          rgb * dest;
+          dest = pixel_at(im, x, y);
+          dest->r = 122;
+          dest->g = 122;
+          dest->b = 122;
+      }
+    }
+    close_image(im);
     return 0;
 }

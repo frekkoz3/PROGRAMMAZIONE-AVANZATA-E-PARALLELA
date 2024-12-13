@@ -1,7 +1,6 @@
 #ifndef _PPM_H
 #define _PPM_H
 
-
 #include <stdio.h>
 
 typedef struct __attribute__ ((packed)) rgb {
@@ -14,6 +13,7 @@ typedef struct ppm_p6{
     int width;
     int height;
     int size;
+    int offset;
     FILE * fd;
     struct rgb * data;
 }ppm;
