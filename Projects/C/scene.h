@@ -1,8 +1,8 @@
-#ifndef _SCENE_H
-#define _SCENE_H
-
 #include <stdio.h>
 #include <stdlib.h>
+
+#ifndef _SCENE_H
+#define _SCENE_H
 
 typedef struct __attribute__ ((packed)) rgb {
     u_int8_t r;
@@ -33,5 +33,6 @@ typedef struct scene_info{
 }scene_info;
 
 int load_scene(char * path, scene_info * scene_file);
+void print_sphere(sphere s);
 
 #endif
