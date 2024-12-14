@@ -105,7 +105,7 @@ struct rgb * pixel_at(ppm_ptr img, int x, int y)
     return NULL;
   }
   
-  return img->data + img->offset + (y*img->width + x);
+  return img->data + img->offset - 10 + (y*img->width + x); // GINORMIC WHY DOES IT WORK WITH -10????
 }
 
 int close_image(ppm_ptr img)
