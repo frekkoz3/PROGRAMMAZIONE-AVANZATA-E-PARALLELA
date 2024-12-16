@@ -5,6 +5,7 @@
 #include <sys/stat.h>
 #include "ppm.h"
 
+
 int empty_image(char * path, ppm_ptr img, int width, int height)
 {
   /*
@@ -105,7 +106,7 @@ struct rgb * pixel_at(ppm_ptr img, int x, int y)
     return NULL;
   }
   
-  return img->data + img->offset - 10 + (y*img->width + x); // GINORMIC WHY DOES IT WORK WITH -10????
+  return (struct rgb *)((char * )img->data + img->offset + (y*img->width + x)*sizeof(struct rgb));
 }
 
 int close_image(ppm_ptr img)
@@ -139,9 +140,9 @@ int main(){
   // to see it just run this snippet and then look at the test.pgm img:
   // it should be all of the same color (red for semplicity) but the upper corner is black
     ppm im;
-    char * path = "test.pgm";
-    int width = 500;
-    int height = 505;
+    char * path = "test.ppm";
+    int width = 3;
+    int height = 3;
     int err = empty_image(path, &im, width, height);
     printf("WRITING SIDE \n");
     printf("size : %d \noffset : %d \nwidth : %d \nheight : %d\n", im.size, im.offset, im.width, im.height);
@@ -151,9 +152,6 @@ int main(){
           dest->r = 255;
           dest->g = 0;
           dest->b = 0;
-          if (dest->r == 0){
-            printf("<R : %u> at (X=%d;Y=%d)  \n", dest->r, x, y);
-          }
       }
     }
     close_image(&im);

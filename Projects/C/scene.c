@@ -4,6 +4,7 @@
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include "scene.h"
+#include "utils.h"
 
 int load_scene(char * path, scene_info * scene_file){
   /*
@@ -59,15 +60,6 @@ int load_scene(char * path, scene_info * scene_file){
 
     fclose(fd);
     return 0;
-}
-
-void print_color(rgb c){
-    printf("R %hhu G %hhu B %hhu\n", c.r, c.g, c.b);
-}
-
-void print_sphere(sphere s){
-    printf("CENTER AT (%f, %f, %f) w/ RADIUS OF %f ", s.x, s.y, s.z, s.radius);
-    print_color(s.color);
 }
 
 int main(){

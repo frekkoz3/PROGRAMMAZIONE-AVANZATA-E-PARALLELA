@@ -1,14 +1,9 @@
-#include <stdio.h>
-#include <stdlib.h>
-
 #ifndef _SCENE_H
 #define _SCENE_H
 
-typedef struct __attribute__ ((packed)) rgb {
-    u_int8_t r;
-    u_int8_t g;
-    u_int8_t b;
-}rgb;
+#include <stdio.h>
+#include <stdlib.h>
+#include "utils.h"
 
 typedef struct viewport{
     float x;
@@ -16,24 +11,15 @@ typedef struct viewport{
     float z;
 }viewport;
 
-typedef struct sphere{
-    float x;
-    float y;
-    float z;
-    float radius;
-    struct rgb color;
-}sphere;
-
 typedef struct scene_info{
     struct viewport vp;
     struct rgb bg;
     int obj_n;
-    struct sphere * objects;
+    sphere * objects;
     FILE * fd;
 }scene_info;
 
 int load_scene(char * path, scene_info * scene_file);
-void print_sphere(sphere s);
-void print_color(rgb c);
+
 
 #endif
