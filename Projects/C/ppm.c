@@ -12,7 +12,7 @@ int empty_image(char * path, ppm_ptr img, int width, int height)
 
     parameters : 
         char * path -> indicates the path of the image
-        ppm_ptr img -> indicates the struct retaining the data for the image
+        ppm_ptr img -> indicates the pointer to the struct retaining the data for the image
         int width -> indicates the width (in pixel) of the image
         int height -> indicates the height (in pixel) of the image
     returns (int) : 

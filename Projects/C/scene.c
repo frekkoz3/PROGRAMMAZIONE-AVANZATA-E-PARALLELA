@@ -6,23 +6,38 @@
 #include "scene.h"
 
 int load_scene(char * path, scene_info * scene_file){
+  /*
+    Load a scene_info from a file
 
+    parameters : 
+        char * path -> indicates the path of the file
+        scene_info * -> indicates the scene_info to populate
+    returns (int) : 
+        it returns the error code raised by the function
+        0 : everything went well
+        -1 : problem occurred while opening the requested path with fopen in reading+ mode
+        -2 : problem occurred while reading a line. wrong format line
+        others : refere to open image return error code 
+    notes : 
+        1. this function does not load the struct ppm_ptr now. this will be done by map_image
+        2*. we must multiply width*height by the dimension of the struct rgb (3*sizeof(u_int8_t))
+  */
     FILE * fd = fopen(path, "r+");
     scene_file->fd = fd;
     if (fd == NULL){
-        return -2;
+        return -1;
     }
     if (fscanf(fd, "VP %f %f %f\n", &(scene_file->vp.x), &(scene_file->vp.y), &(scene_file->vp.z)) != 3){
         fclose(fd);
-        return -3;
+        return -2;
     }
     if (fscanf(fd, "BG %hhu %hhu %hhu\n", &(scene_file->bg.r), &(scene_file->bg.g), &(scene_file->bg.b)) != 3){
         fclose(fd);
-        return -3;
+        return -2;
     }
     if (fscanf(fd, "OBJ_N %d\n", &(scene_file->obj_n)) != 1){
         fclose(fd);
-        return -3;
+        return -2;
     }
     scene_file->objects = (sphere *)malloc(scene_file->obj_n * sizeof(sphere));
     for(int i = 0; i < scene_file->obj_n; i++){
@@ -33,7 +48,7 @@ int load_scene(char * path, scene_info * scene_file){
         rgb * col = (rgb *)malloc(sizeof(rgb));
         if (fscanf(fd, "S %f %f %f %f %hhu %hhu %hhu\n", &xi, &yi, &zi, &ri, &(col->r), &(col->g), &(col->b)) != 7){
             fclose(fd);
-            return -3;
+            return -2;
         }
         scene_file->objects[i].x = xi;
         scene_file->objects[i].y = yi;
@@ -46,17 +61,22 @@ int load_scene(char * path, scene_info * scene_file){
     return 0;
 }
 
+void print_color(rgb c){
+    printf("R %hhu G %hhu B %hhu\n", c.r, c.g, c.b);
+}
+
 void print_sphere(sphere s){
-    printf("CENTER AT (%f, %f, %f) w/ RADIUS OF %f\n", s.x, s.y, s.z, s.radius);
+    printf("CENTER AT (%f, %f, %f) w/ RADIUS OF %f ", s.x, s.y, s.z, s.radius);
+    print_color(s.color);
 }
 
 int main(){
 
     char * p = "scene_test.txt";
-    scene_info scena;
-    load_scene(p, &scena);
-    sphere * sfere = scena.objects;
-    for(int i = 0; i < scena.obj_n; i++ ){
+    scene_info scene;
+    load_scene(p, &scene);
+    sphere * sfere = scene.objects;
+    for(int i = 0; i < scene.obj_n; i++ ){
         print_sphere(sfere[i]);
     }
     return 0;

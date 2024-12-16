@@ -34,5 +34,6 @@ typedef struct scene_info{
 
 int load_scene(char * path, scene_info * scene_file);
 void print_sphere(sphere s);
+void print_color(rgb c);
 
 #endif
