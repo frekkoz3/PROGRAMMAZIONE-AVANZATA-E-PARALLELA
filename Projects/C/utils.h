@@ -5,23 +5,23 @@
 #include <stdio.h>
 #include <stdint.h>
 
-typedef struct point{
+typedef struct viewport{
     float x;
     float y;
     float z;
-}point;
-
-typedef struct direction{
-    float x;
-    float y;
-    float z;
-}direction;
+}viewport;
 
 typedef struct __attribute__ ((packed)) rgb {
-    u_int8_t r;
-    u_int8_t g;
-    u_int8_t b;
+    uint8_t r;
+    uint8_t g;
+    uint8_t b;
 }rgb;
+
+typedef struct vector{
+    float x;
+    float y;
+    float z;
+}vector;
 
 typedef struct sphere{
     float x;
@@ -31,9 +31,11 @@ typedef struct sphere{
     rgb color;
 }sphere;
 
-float difference(point a, point b);
-void normalize(direction * d);
+float difference(vector a, vector b);
+int normalize(vector * v);
 void print_sphere(sphere s);
 void print_color(rgb c);
+void print_vector(vector v);
+vector * rays(viewport v, int width, int height);
 
 #endif

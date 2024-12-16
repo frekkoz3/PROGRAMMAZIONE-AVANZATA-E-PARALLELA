@@ -61,15 +61,3 @@ int load_scene(char * path, scene_info * scene_file){
     fclose(fd);
     return 0;
 }
-
-int main(){
-
-    char * p = "scene_test.txt";
-    scene_info scene;
-    load_scene(p, &scene);
-    sphere * sfere = scene.objects;
-    for(int i = 0; i < scene.obj_n; i++ ){
-        print_sphere(sfere[i]);
-    }
-    return 0;
-}

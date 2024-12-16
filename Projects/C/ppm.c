@@ -4,7 +4,7 @@
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include "ppm.h"
-
+#include "utils.h"
 
 int empty_image(char * path, ppm_ptr img, int width, int height)
 {
@@ -33,12 +33,12 @@ int empty_image(char * path, ppm_ptr img, int width, int height)
   int written = fprintf(fd, "P6\n%d %d\n255\n", width, height);
   // resizing the dimension of the file at the correct one
   // 2*
-  ftruncate(fileno(fd), written + width * height * sizeof(struct rgb)); 
+  ftruncate(fileno(fd), written + width * height * sizeof(rgb)); 
   fclose(fd);
-  return map_image(path, img);
+  return open_image(path, img);
 }
 
-int map_image(char * path, ppm_ptr img)
+int open_image(char * path, ppm_ptr img)
 {
   /*
     Open an image an map it with mmap
@@ -80,7 +80,7 @@ int map_image(char * path, ppm_ptr img)
   return 0;
 }
 
-struct rgb * pixel_at(ppm_ptr img, int x, int y)
+rgb * pixel_at(ppm_ptr img, int x, int y)
 {
   /*
 
@@ -106,7 +106,7 @@ struct rgb * pixel_at(ppm_ptr img, int x, int y)
     return NULL;
   }
   
-  return (struct rgb *)((char * )img->data + img->offset + (y*img->width + x)*sizeof(struct rgb));
+  return (rgb *)((char * )img->data + img->offset + (y*img->width + x)*sizeof(rgb));
 }
 
 int close_image(ppm_ptr img)
@@ -132,40 +132,4 @@ int close_image(ppm_ptr img)
   munmap(img->data, img->size);
   fclose(img->fd);
   return 0;
-}
-
-int main(){
-
-  // THERE'S A BUG TO FIX
-  // to see it just run this snippet and then look at the test.pgm img:
-  // it should be all of the same color (red for semplicity) but the upper corner is black
-    ppm im;
-    char * path = "test.ppm";
-    int width = 3;
-    int height = 3;
-    int err = empty_image(path, &im, width, height);
-    printf("WRITING SIDE \n");
-    printf("size : %d \noffset : %d \nwidth : %d \nheight : %d\n", im.size, im.offset, im.width, im.height);
-    for (int x = 0; x < im.width; x++){
-      for (int y = 0; y < im.height; y++){
-          rgb * dest = pixel_at(&im, x, y);
-          dest->r = 255;
-          dest->g = 0;
-          dest->b = 0;
-      }
-    }
-    close_image(&im);
-    err = map_image(path, &im);
-    printf("READING SIDE \n");
-    printf("size : %d \noffset : %d \nwidth : %d \nheight : %d\n", im.size, im.offset, im.width, im.height);
-    for (int x = 0; x < im.width; x++){
-      for (int y = 0; y < im.height; y++){
-          rgb * proof = pixel_at(&im, x, y);
-          if (proof->r == 0){
-            printf("<R : %u> at (X=%d;Y=%d) \n", proof->r, x, y);
-          }
-      }
-    }
-    close_image(&im);
-    return 0;
 }
