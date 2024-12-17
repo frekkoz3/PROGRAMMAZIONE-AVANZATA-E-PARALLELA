@@ -83,7 +83,7 @@ class Memory():
         else:
             self.__items[k] = n
 
-class Queque():
+class Queue():
     def __init__(self, items = None):
         self.__items = []
         if items != None:
@@ -124,8 +124,8 @@ class myLMC():
         self.__memory = Memory(memory)
         self.__accumulator = 0
         self.__program_counter = ProgramCounter()
-        self.__input_queque = Queque(input_q)
-        self.__output_queque = Queque()
+        self.__input_queque = Queue(input_q)
+        self.__output_queque = Queue()
         self.__flag = 0 
         self.__working = True
 

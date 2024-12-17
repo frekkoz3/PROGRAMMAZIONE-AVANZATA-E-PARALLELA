@@ -1,10 +1,11 @@
+#include <stdlib.h> 
 #include <stdio.h>
-#include <stdlib.h>
 #include <unistd.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
-#include "ppm.h"
 #include "utils.h"
+#include "ppm.h"
+
 
 int empty_image(char * path, ppm_ptr img, int width, int height)
 {

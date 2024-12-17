@@ -1,10 +1,10 @@
 CC = gcc
-CFLAGS = -O3 -Wall -pedantic -std=c17
+CFLAGS = -O3 -Wall -std=c17 -pedantic
 HEADERS = ${wildcards *.h}
 
 all: main
 
-main: main.o utils.o
+main: main.o utils.o scene.o ppm.o
 	${CC} ${CFLAGS} -o $@ $^
 
 %.o: %.c ${HEADERS}

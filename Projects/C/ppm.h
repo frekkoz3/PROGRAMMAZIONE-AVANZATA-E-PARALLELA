@@ -5,15 +5,6 @@
 #include <stdlib.h>
 #include "utils.h"
 
-typedef struct ppm_p6{
-    int width;
-    int height;
-    int offset;
-    int size;
-    FILE * fd;
-    rgb * data;
-}ppm;
-
 typedef struct ppm_p6 * ppm_ptr;
 
 int open_image(char * path, ppm_ptr img);

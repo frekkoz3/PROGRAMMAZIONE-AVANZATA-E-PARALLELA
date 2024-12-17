@@ -4,7 +4,6 @@
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include "utils.h"
-#include "scene.h"
 #include <math.h>
 
 void print_color(rgb c){
