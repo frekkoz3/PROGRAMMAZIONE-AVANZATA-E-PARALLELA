@@ -4,7 +4,7 @@ class BadOperandException(Exception):
 class IllegalInstructionException(Exception):
     pass
 
-class ProgramCounter():
+class ProgramCounter:
 
     def __init__(self):
         self.__counter = 0
@@ -21,23 +21,48 @@ class ProgramCounter():
             print(f"Excepted an integer. {type(n)} received instead.")
             raise BadOperandException
         self.__counter = (n % 1000)
-        return self.__counter
+        return self.__counter      
 
     def __str__(self):
         return str(self.__counter)   
     
+    def __lt__(self, n):
+        return self.__counter < n
+
+    def __gt__(self, n):
+        return self.__counter > n
+    
 class Memory():
 
-    def __init__(self):
+    def __init__(self, items = None):
         self.__items = [0]*100
+        if items != None:
+            if not isinstance(items, list):
+                print("Need a list to initialize a Queque.")
+                raise BadOperandException
+            if len(items) > 100:
+                print("Memory must be up to 100 size")
+                raise BadOperandException
+            for l in items:
+                if not isinstance(l, int):
+                    print("Need a list of integer to initialize a Memory.")
+                    raise BadOperandException
+                if l < 0 or l > 999:
+                    print("Need a list of integer  in the range [0 - 999] to initialize a Memory.")
+                    raise BadOperandException
+            for i in range (len (items)):
+                self.__items[i] = items[i]
+    
 
     def __getitem__(self, k):
-        if not isinstance(k, int):
-            print("Index must be an integer.")
+        if not isinstance(k, (int, ProgramCounter)):
+            print("Index must be an integer or a Program Counter.")
             raise BadOperandException
         if k < 0 or k > 99:
             print("Index out of range. [range 0 - 99]")
             raise BadOperandException
+        if isinstance(k, ProgramCounter):
+            return self.__items[k._ProgramCounter__counter]
         return self.__items[k]
 
     def __setitem__(self, k, n):
@@ -46,8 +71,17 @@ class Memory():
             raise BadOperandException      
         if n < 0 or n > 999:      
             print("Value is either too small or too big [range 0 - 999].")
-            raise BadOperandException      
-        self.__items[k] = n
+            raise BadOperandException   
+        if not isinstance(k, (int, ProgramCounter)):
+            print("Index must be an integer or a Program Counter.")
+            raise BadOperandException
+        if k < 0 or k > 99:
+            print("Index out of range. [range 0 - 99]")
+            raise BadOperandException  
+        if isinstance(k, ProgramCounter):
+            self.__items[k._ProgramCounter__counter] = n
+        else:
+            self.__items[k] = n
 
 class Queque():
     def __init__(self, items = None):
@@ -56,14 +90,14 @@ class Queque():
             if not isinstance(items, list):
                 print("Need a list to initialize a Queque.")
                 raise BadOperandException
-            for l in list:
+            for l in items:
                 if not isinstance(l, int):
                     print("Need a list of integer to initialize a Queque.")
                     raise BadOperandException
                 if l < 0 or l > 999:
                     print("Need a list of integer  in the range [0 - 999] to initialize a Queque.")
                     raise BadOperandException
-            self.item == items
+            self.__items == items
     
     def append(self, n):
         if not isinstance(n, int):
@@ -86,8 +120,8 @@ class Queque():
 
 class myLMC():
 
-    def __init__(self, input_q, input_m): # input as list !!
-        self.__memory = Memory(input_m)
+    def __init__(self, memory, input_q): # input as list !!
+        self.__memory = Memory(memory)
         self.__accumulator = 0
         self.__program_counter = ProgramCounter()
         self.__input_queque = Queque(input_q)
@@ -131,30 +165,43 @@ class myLMC():
     def halt(self, k):
         self.__working = False
 
-    def work(self):
+    
+    def work(self, verbose = False):
         while self.__working:
             instruction = self.__memory[self.__program_counter]
+            if verbose :
+                print(f"Doing instruction {instruction}. Accumulator rn at {self.__accumulator}")
             radix = instruction//100
             index = instruction%100
-            if radix == 1:
-                self.__add__(index)
-            elif radix == 2:
-                self.__sub__(index)
-            elif radix == 3:
-                self.store(index)
-            elif radix == 5:
-                self.load(index)
-            elif radix == 6:
-                self.branch(index)
-            elif radix == 7:
-                self.branch_ifzero(index)
-            elif radix == 8:
-                self.branch_ifpositive(index)
-            elif instruction == 901:
-                self.input()
-            elif instruction == 902:
-                self.output()
-            elif radix == 0:
-                self.halt()
-            else:
-                raise IllegalInstructionException
+            try:
+                if radix == 1:
+                    self.__add__(index)
+                elif radix == 2:
+                    self.__sub__(index)
+                elif radix == 3:
+                    self.store(index)
+                elif radix == 5:
+                    self.load(index)
+                elif radix == 6:
+                    self.branch(index)
+                elif radix == 7:
+                    self.branch_ifzero(index)
+                elif radix == 8:
+                    self.branch_ifpositive(index)
+                elif instruction == 901:
+                    self.input()
+                elif instruction == 902:
+                    self.output()
+                elif radix == 0:
+                    self.halt(index)
+                else:
+                    raise IllegalInstructionException
+                self.__program_counter += 1
+            except BadOperandException:
+                print(f"The sequent instruction raised a Bad Operand Exception: {instruction}")
+                self.halt(index)
+
+memory = [500, 902, 208, 708, 500, 108, 300, 600, 1]
+inputq = []
+Larry = myLMC(memory, inputq)
+Larry.work()
