@@ -14,14 +14,20 @@ class ProgramCounter:
             print(f"Excepted an integer. {type(n)} received instead.")
             raise BadOperandException
         self.__counter = (self.__counter + n) % 1000
-        return self.__counter
+        return self
     
     def __mul__(self, n): # this is the branch
         if not isinstance(n, int):
             print(f"Excepted an integer. {type(n)} received instead.")
             raise BadOperandException
         self.__counter = (n % 1000)
-        return self.__counter      
+        return self    
+
+    def set_counter(self, n):
+        if not isinstance(n, int):
+            print(f"Excepted an integer. {type(n)} received instead.")
+            raise BadOperandException
+        self.__counter = (n % 1000)
 
     def __str__(self):
         return str(self.__counter)   
@@ -83,10 +89,13 @@ class Memory():
         else:
             self.__items[k] = n
 
+    def asList(self):
+        return self.__items
+    
 class Queue():
     def __init__(self, items = None):
         self.__items = []
-        if items != None:
+        if not items == None:
             if not isinstance(items, list):
                 print("Need a list to initialize a Queque.")
                 raise BadOperandException
@@ -97,7 +106,7 @@ class Queue():
                 if l < 0 or l > 999:
                     print("Need a list of integer  in the range [0 - 999] to initialize a Queque.")
                     raise BadOperandException
-            self.__items == items
+            self.__items = items
     
     def append(self, n):
         if not isinstance(n, int):
@@ -109,7 +118,7 @@ class Queue():
         self.__items.append(n)
 
     def pop(self):
-        return self.__items.pop()
+        return self.__items.pop(0)
     
     def __add__(self, n):
         self.append(n)
@@ -120,12 +129,12 @@ class Queue():
 
 class myLMC():
 
-    def __init__(self, memory, input_q): # input as list !!
+    def __init__(self, memory, input_q = None): # input as list !!
         self.__memory = Memory(memory)
         self.__accumulator = 0
         self.__program_counter = ProgramCounter()
-        self.__input_queque = Queue(input_q)
-        self.__output_queque = Queue()
+        self.__input_queue = Queue(input_q)
+        self.__output_queue = Queue()
         self.__flag = 0 
         self.__working = True
 
@@ -146,7 +155,8 @@ class myLMC():
         self.__accumulator = self.__memory[k]
     
     def branch(self, k):
-        self.__program_counter *= k
+        self.__program_counter*=k
+        self.__program_counter+=(-1) # i will increment it later so i decrement it now
     
     def branch_ifzero(self, k):
         if not self.__flag and self.__accumulator == 0:
@@ -157,24 +167,34 @@ class myLMC():
             self.branch(k)
     
     def input(self):
-        self.__accumulator = self.__input_queque.pop()
+        self.__accumulator = self.__input_queue.pop()
     
     def output(self):
-        self.__output_queque += self.__accumulator
+        self.__output_queue += self.__accumulator
     
     def halt(self, k):
         self.__working = False
-
     
-    def work(self, verbose = False):
+    def work(self, verbose = False, slow = False):
+        import time
         while self.__working:
+            if slow:
+                time.sleep(0.5)
             instruction = self.__memory[self.__program_counter]
-            if verbose :
-                print(f"Doing instruction {instruction}. Accumulator rn at {self.__accumulator}")
             radix = instruction//100
             index = instruction%100
-            try:
-                if radix == 1:
+            
+            if verbose :
+                print(f"Doing instruction {instruction}. Accumulator rn at {self.__accumulator}. Program counter rn at {self.__program_counter}.")
+            
+            if instruction == 901:
+                self.input()
+            elif instruction == 902:
+                self.output()
+            else:
+                if radix == 0:
+                    self.halt(index)
+                elif radix == 1:
                     self.__add__(index)
                 elif radix == 2:
                     self.__sub__(index)
@@ -188,20 +208,21 @@ class myLMC():
                     self.branch_ifzero(index)
                 elif radix == 8:
                     self.branch_ifpositive(index)
-                elif instruction == 901:
-                    self.input()
-                elif instruction == 902:
-                    self.output()
-                elif radix == 0:
-                    self.halt(index)
                 else:
                     raise IllegalInstructionException
-                self.__program_counter += 1
-            except BadOperandException:
-                print(f"The sequent instruction raised a Bad Operand Exception: {instruction}")
-                self.halt(index)
+            self.__program_counter += 1
+            if verbose :
+                print(f" |-Instruction {instruction} is done. Accumulator rn at {self.__accumulator}. Program counter rn at {self.__program_counter}.")
+        
+    
+    def result(self):
+        return self.__output_queue
 
-memory = [500, 902, 208, 708, 500, 108, 300, 600, 1]
-inputq = []
-Larry = myLMC(memory, inputq)
-Larry.work()
+    def get_input(self):
+        return self.__input_queue
+    
+if __name__ == "__main__":
+
+    Kevin = myLMC(memory = [901, 310, 901, 110, 902, 0], input_q = [2, 3])
+    Kevin.work(verbose=True)
+    print(Kevin.result())
