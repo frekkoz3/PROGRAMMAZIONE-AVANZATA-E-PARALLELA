@@ -158,43 +158,84 @@ class myLMC():
         self.__working = True
 
     def __add__(self, k):
+        """
+            Perform an addition of the accumulator module 1000. 
+            It also set the flag to true if an overflow occurred.
+        """
         self.__accumulator = self.__accumulator + self.__memory[k]
         self.__flag = self.__accumulator > 999
         self.__accumulator = self.__accumulator%1000
     
     def __sub__(self, k):
+        """
+            Perform a subtraction of the accumulator module 1000. 
+            It also set the flag to true if an underflow occurred.
+        """
         self.__accumulator = self.__accumulator - self.__memory[k]
         self.__flag = self.__accumulator < 0
         self.__accumulator = self.__accumulator%1000
 
     def __store(self, k):
+        """
+            Store the accumulator value at the memory cell of the given index. 
+        """
         self.__memory[k] = self.__accumulator
     
     def __load(self, k):
+        """
+            Load the value at the memory cell of the given index into the accumulator. 
+        """
         self.__accumulator = self.__memory[k]
     
     def __branch(self, k):
+        """
+            Branch of the program counter. 
+        """
         self.__program_counter*=k # Branch
         self.__program_counter+=(-1) # i will increment it later so we decrement it now
     
     def __branch_ifzero(self, k):
+        """
+            Branch if zero of the program counter. 
+        """
         if not self.__flag and self.__accumulator == 0:
             self.branch(k)
 
     def __branch_ifpositive(self, k):
+        """
+            Branch if positive of the program counter. 
+        """
         if not self.__flag:
             self.branch(k)
     
     def __input(self):
+        """
+            Input action : load the head of the input queue into the accumulator. 
+        """
         self.__accumulator = self.__input_queue.pop()
     
     def __output(self):
+        """
+            Output action : append at the head of the output queue the value of the accumulator. 
+        """
         self.__output_queue += self.__accumulator
     
     def __halt(self, k):
+        """
+            Halt. Stop the working flow.
+        """
         self.__working = False
     
     def work(self, verbose = False, slow = False):
+        """
+
+            Core method of the Little Man Computer. It performs the simulation 
+            of the LMC Architecture. 
+
+            Parameters : 
+                verbose (Bool): if True print the status of the lmc while working
+                slow (Bool) : if True set a 0.5 second deelay per cycle     
+        """
         import time
         while self.__working:
             if slow:
