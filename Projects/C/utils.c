@@ -10,13 +10,12 @@ void print_color(rgb c){
     printf("R %hhu G %hhu B %hhu\n", c.r, c.g, c.b);
 }
 
-void print_sphere(sphere s){
-    printf("CENTER AT (%f, %f, %f) w/ RADIUS OF %f ", s.x, s.y, s.z, s.radius);
-    print_color(s.color);
-}
-
 void print_vector(vector v){
     printf("X %f Y %f Z %f \n", v.x, v.y, v.z);
+}
+
+void print_sphere(sphere s){
+    print_vector(s.center);
 }
 
 int normalize(vector * v){
@@ -30,18 +29,20 @@ int normalize(vector * v){
     return 0;
 }
 
-vector * rays(viewport v, int width, int height){
-    vector * all_rays = (vector *)malloc(width * height * sizeof(vector));
-    for (int i = 0; i < width; i ++ ){
-        for (int j = 0; j < height; j ++){
-            all_rays[i*width + j].x = ((v.x/(width-1))*i - v.x/2);
-            all_rays[i*width + j].y = ((v.y/(height-1))*j - v.y/2);
-            all_rays[i*width + j].z = 1;
-            int errn = normalize(all_rays + i*width + j);
-            if (errn != 0){
-                printf("ERROR OCCURRED");
-            }
-        }
+float inner_product(vector v, vector w){
+    return (v.x*w.x + v.y*w.y + v.z * w.z);
+}
+
+float distance(sphere s, vector v){
+    float a = inner_product(v, v);
+    float b = -2*inner_product(s.center, v);
+    float c = inner_product(s.center, s.center) - s.radius*s.radius;
+    float delta = (b*b - 4*a*c);
+    if (delta < 0){
+        return -1; // Default for saying no-intersection found
+    }else if (delta == 0){
+        return abs(-b/(2*a));
+    }else{
+        return fmin(abs((-b+sqrt(delta))/(2*a)), abs((-b-sqrt(delta))/(2*a)));
     }
-    return all_rays;
 }

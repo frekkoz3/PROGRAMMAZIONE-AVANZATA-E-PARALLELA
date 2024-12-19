@@ -51,13 +51,20 @@ int load_scene(char * path, scene_info * scene_file){
             fclose(fd);
             return -2;
         }
-        scene_file->objects[i].x = xi;
-        scene_file->objects[i].y = yi;
-        scene_file->objects[i].z = zi;
+        vector t;
+        t.x = xi;
+        t.y = yi;
+        t.z = zi;
+        scene_file->objects[i].center = t;
         scene_file->objects[i].radius = ri;
         scene_file->objects[i].color = *col;
     }
 
     fclose(fd);
+    return 0;
+}
+
+int free_scene(scene_info * scene){
+    free(scene->objects);
     return 0;
 }

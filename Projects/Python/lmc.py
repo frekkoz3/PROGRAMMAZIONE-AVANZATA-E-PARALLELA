@@ -23,12 +23,6 @@ class ProgramCounter:
         self.__counter = (n % 1000)
         return self    
 
-    def set_counter(self, n):
-        if not isinstance(n, int):
-            print(f"Excepted an integer. {type(n)} received instead.")
-            raise BadOperandException
-        self.__counter = (n % 1000)
-
     def __str__(self):
         return str(self.__counter)   
     

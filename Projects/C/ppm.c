@@ -34,7 +34,10 @@ int empty_image(char * path, ppm_ptr img, int width, int height)
   int written = fprintf(fd, "P6\n%d %d\n255\n", width, height);
   // resizing the dimension of the file at the correct one
   // 2*
-  ftruncate(fileno(fd), written + width * height * sizeof(rgb)); 
+  int errn = ftruncate(fileno(fd), written + width * height * sizeof(rgb)); 
+  if (errn != 0){
+    printf("ERROR OCCURRED WHILE USING FTRUNCATE\n");
+  }
   fclose(fd);
   return open_image(path, img);
 }
@@ -84,7 +87,6 @@ int open_image(char * path, ppm_ptr img)
 rgb * pixel_at(ppm_ptr img, int x, int y)
 {
   /*
-
     Return the pixel of an image in at coordinate (x, y)
     
     parameters : 
@@ -97,7 +99,9 @@ rgb * pixel_at(ppm_ptr img, int x, int y)
         NULL : image is NULL or (x, y) are invalid coordinates
 
     notes :
-        1*. equivalent to return &img->data[img->offset + y*img->width + x]
+        1*. we must perform the cast to obtain the correct index. we start with the char * 
+            just to have something with 1byte dimension (we could have used also u_int8_t)
+            then we find the right position and then we cast to rgb *
 
   */
   if (img == NULL){
@@ -106,14 +110,13 @@ rgb * pixel_at(ppm_ptr img, int x, int y)
   if ( (x >= img->width) || (y >= img->height) || (x < 0) || (y < 0)){
     return NULL;
   }
-  
+  // 1*
   return (rgb *)((char * )img->data + img->offset + (y*img->width + x)*sizeof(rgb));
 }
 
 int close_image(ppm_ptr img)
 {
   /*
-
     Deallocate the img
     
     parameters : 
@@ -123,13 +126,11 @@ int close_image(ppm_ptr img)
         -1 : image is NULL or (x, y) are invalid coordinates
 
     notes:
-        1.* : we have to remove the offset
 
   */
   if (img == NULL){
     return -1;
   }
-  // 1*
   munmap(img->data, img->size);
   fclose(img->fd);
   return 0;

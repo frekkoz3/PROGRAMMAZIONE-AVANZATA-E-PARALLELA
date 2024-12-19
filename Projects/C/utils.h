@@ -35,9 +35,7 @@ typedef struct ppm_p6{
 }ppm;
 
 typedef struct sphere{
-    float x;
-    float y;
-    float z;
+    vector center;
     float radius;
     rgb color;
 }sphere;
@@ -51,10 +49,11 @@ typedef struct scene_info{
 }scene_info;
 
 float difference(vector a, vector b);
+float distance(sphere s, vector v);
+float inner_product(vector v, vector w);
 int normalize(vector * v);
-void print_sphere(sphere s);
 void print_color(rgb c);
 void print_vector(vector v);
-vector * rays(viewport v, int width, int height);
+void print_sphere(sphere s);
 
 #endif
