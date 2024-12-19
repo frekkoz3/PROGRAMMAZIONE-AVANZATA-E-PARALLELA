@@ -6,17 +6,22 @@ class IllegalInstructionException(Exception):
 
 class ProgramCounter:
 
+    """
+        Class for the ProgramCounter. It implements the addition as addition module 1000 and the branch as multiplication. 
+        If asking for the reason of this, the answer will be something vague about how cool it looks.
+    """
+
     def __init__(self):
         self.__counter = 0
     
-    def __add__(self, n): # this is the normal increment
+    def __add__(self, n): # Addition
         if not isinstance(n, int):
             print(f"Excepted an integer. {type(n)} received instead.")
             raise BadOperandException
         self.__counter = (self.__counter + n) % 1000
         return self
     
-    def __mul__(self, n): # this is the branch
+    def __mul__(self, n): # Branch
         if not isinstance(n, int):
             print(f"Excepted an integer. {type(n)} received instead.")
             raise BadOperandException
@@ -33,6 +38,13 @@ class ProgramCounter:
         return self.__counter > n
     
 class Memory():
+
+    """
+        Class for the memory. it has a memory size fixed to 100. It can be initialized with a list. It only contains integer in the range [0 - 999]. 
+        It implements both get and set item as if it was a simple list but checking for all the possible excpetion. 
+        The Memory class is implemented to interacts well with  ProgramCounter objects. 
+        At the end we also implement the asList method to return, when necessary, the memory as list.
+    """
 
     def __init__(self, items = None):
         self.__items = [0]*100
@@ -87,6 +99,12 @@ class Memory():
         return self.__items
     
 class Queue():
+
+    """
+        Generic class for a Queue of integer in the range [0 - 999].
+        It implements the usual append and pop methods. It also implements the append as an addition.
+    """
+
     def __init__(self, items = None):
         self.__items = []
         if not items == None:
@@ -123,6 +141,13 @@ class Queue():
 
 class myLMC():
 
+    """
+        Class for the LMC.
+        It has a Memory, an accumulator, a ProgramCounter, an input Queue, an output Queue, a flag and a working check.
+        The use of them are well explained in the pdf. Working check is used for the computation.
+        We access to the input Queue and the output Queue with get_input and result. 
+    """
+
     def __init__(self, memory, input_q = None): # input as list !!
         self.__memory = Memory(memory)
         self.__accumulator = 0
@@ -142,31 +167,31 @@ class myLMC():
         self.__flag = self.__accumulator < 0
         self.__accumulator = self.__accumulator%1000
 
-    def store(self, k):
+    def __store(self, k):
         self.__memory[k] = self.__accumulator
     
-    def load(self, k):
+    def __load(self, k):
         self.__accumulator = self.__memory[k]
     
-    def branch(self, k):
-        self.__program_counter*=k
-        self.__program_counter+=(-1) # i will increment it later so i decrement it now
+    def __branch(self, k):
+        self.__program_counter*=k # Branch
+        self.__program_counter+=(-1) # i will increment it later so we decrement it now
     
-    def branch_ifzero(self, k):
+    def __branch_ifzero(self, k):
         if not self.__flag and self.__accumulator == 0:
             self.branch(k)
 
-    def branch_ifpositive(self, k):
+    def __branch_ifpositive(self, k):
         if not self.__flag:
             self.branch(k)
     
-    def input(self):
+    def __input(self):
         self.__accumulator = self.__input_queue.pop()
     
-    def output(self):
+    def __output(self):
         self.__output_queue += self.__accumulator
     
-    def halt(self, k):
+    def __halt(self, k):
         self.__working = False
     
     def work(self, verbose = False, slow = False):
@@ -182,26 +207,26 @@ class myLMC():
                 print(f"Doing instruction {instruction}. Accumulator rn at {self.__accumulator}. Program counter rn at {self.__program_counter}.")
             
             if instruction == 901:
-                self.input()
+                self.__input()
             elif instruction == 902:
-                self.output()
+                self.__output()
             else:
                 if radix == 0:
-                    self.halt(index)
+                    self.__halt(index)
                 elif radix == 1:
                     self.__add__(index)
                 elif radix == 2:
                     self.__sub__(index)
                 elif radix == 3:
-                    self.store(index)
+                    self.__store(index)
                 elif radix == 5:
-                    self.load(index)
+                    self.__load(index)
                 elif radix == 6:
-                    self.branch(index)
+                    self.__branch(index)
                 elif radix == 7:
-                    self.branch_ifzero(index)
+                    self.__branch_ifzero(index)
                 elif radix == 8:
-                    self.branch_ifpositive(index)
+                    self.__branch_ifpositive(index)
                 else:
                     raise IllegalInstructionException
             self.__program_counter += 1

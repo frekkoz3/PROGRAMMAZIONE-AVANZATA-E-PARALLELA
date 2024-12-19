@@ -41,8 +41,8 @@ float distance(sphere s, vector v){
     if (delta < 0){
         return -1; // Default for saying no-intersection found
     }else if (delta == 0){
-        return abs(-b/(2*a));
+        return fabs(-b/(2*a));
     }else{
-        return fmin(abs((-b+sqrt(delta))/(2*a)), abs((-b-sqrt(delta))/(2*a)));
+        return fmin(fabs((-b+sqrt(delta))/(2*a)), fabs((-b-sqrt(delta))/(2*a)));
     }
 }
