@@ -1,3 +1,8 @@
+/*
+    Francesco Bredariol SM3201379
+    Programmazione Avanzata e Parallela - Progetto C
+    Anno 2024-2025
+*/
 #include <stdlib.h> 
 #include <stdio.h>
 #include <unistd.h>
@@ -5,7 +10,6 @@
 #include <sys/stat.h>
 #include "utils.h"
 #include "ppm.h"
-
 
 int empty_image(char * path, ppm_ptr img, int width, int height)
 {

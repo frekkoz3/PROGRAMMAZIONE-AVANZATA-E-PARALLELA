@@ -1,8 +1,9 @@
-class BadOperandException(Exception):
-    pass
-
-class IllegalInstructionException(Exception):
-    pass
+"""
+    Francesco Bredariol SM3201379
+    Programmazione Avanzata e Parallela - Progetto Python
+    Anno 2024-2025
+"""
+from excpts import *
 
 class ProgramCounter:
 

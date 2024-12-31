@@ -1,3 +1,8 @@
+/*
+    Francesco Bredariol SM3201379
+    Programmazione Avanzata e Parallela - Progetto C
+    Anno 2024-2025
+*/
 #ifndef _SCENE_H
 #define _SCENE_H
 
