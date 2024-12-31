@@ -131,6 +131,9 @@ class Queue():
         self.__items.append(n)
 
     def pop(self):
+        if len(self.__items) == 0:
+            print("Cannot pop from an empty queue.")
+            raise BadOperandException
         return self.__items.pop(0)
     
     def __add__(self, n):
