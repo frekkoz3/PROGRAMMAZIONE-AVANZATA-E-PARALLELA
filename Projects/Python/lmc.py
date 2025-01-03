@@ -203,14 +203,14 @@ class myLMC():
             Branch if zero of the program counter. 
         """
         if not self.__flag and self.__accumulator == 0:
-            self.branch(k)
+            self.__branch(k)
 
     def __branch_ifpositive(self, k):
         """
             Branch if positive of the program counter. 
         """
         if not self.__flag:
-            self.branch(k)
+            self.__branch(k)
     
     def __input(self):
         """
