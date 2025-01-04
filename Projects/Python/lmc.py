@@ -230,7 +230,7 @@ class myLMC():
         """
         self.__working = False
     
-    def work(self, verbose = False, slow = False):
+    def work(self, verbose = False, slow = False, one_step = False):
         """
 
             Core method of the Little Man Computer. It performs the simulation 
@@ -244,6 +244,8 @@ class myLMC():
         while self.__working:
             if slow:
                 time.sleep(0.5)
+            if one_step:
+                keep = input()
             instruction = self.__memory[self.__program_counter]
             radix = instruction//100
             index = instruction%100

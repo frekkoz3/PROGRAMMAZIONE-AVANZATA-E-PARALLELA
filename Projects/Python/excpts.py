@@ -8,3 +8,6 @@ class BadOperandException(Exception):
 
 class IllegalOperationException(Exception):
     pass
+
+class IllegalInstructionException(Exception):
+    pass
