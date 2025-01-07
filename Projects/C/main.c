@@ -1,3 +1,8 @@
+/*
+    Francesco Bredariol SM3201379
+    Programmazione Avanzata e Parallela - Progetto C
+    Anno 2024-2025
+*/
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -80,18 +85,30 @@ int main(int argc, char *argv[]){
     // SCENE OPENING
     scene_info scene;
     int errn = load_scene(scene_path, &scene);
-    printf("LOAD SCENE ERROR %d \n", errn);
+    if (errn != 0 ){
+        printf("LOAD SCENE ERROR %d \n", errn);
+    }
     // IMG OPENING
     ppm img;
     errn = empty_image(img_path, &img, width, height);
-    printf("EMPTY IMAGE ERROR %d \n", errn);
+    if (errn != 0 ){
+        printf("EMPTY IMAGE ERROR %d \n", errn);
+    }
     // RAYTRAYCING
     errn = raytraicing(scene, &img, width, height);
-    printf("RAYTRACING ERROR %d \n", errn);
+    if (errn != 0 ){
+        printf("RAYTRACING ERROR %d \n", errn);
+    }
     // IMG CLOSING
     errn = close_image(&img);
-    printf("CLOSE IMAGE ERROR %d \n", errn);
+    if (errn != 0 ){
+        printf("CLOSE IMAGE ERROR %d \n", errn);
+    }
     // SCENE CLOSING
     errn = free_scene(&scene);
+    if (errn != 0 ){
+        printf("CLOSE SCENE ERROR %d \n", errn);
+    }
+    printf("Process Done. We remember you that you'll find the image at the %s location.\n", img_path);
     return 0;
 }

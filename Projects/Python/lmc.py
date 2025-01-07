@@ -1,8 +1,9 @@
-class BadOperandException(Exception):
-    pass
-
-class IllegalInstructionException(Exception):
-    pass
+"""
+    Francesco Bredariol SM3201379
+    Programmazione Avanzata e Parallela - Progetto Python
+    Anno 2024-2025
+"""
+from excpts import *
 
 class ProgramCounter:
 
@@ -202,14 +203,14 @@ class myLMC():
             Branch if zero of the program counter. 
         """
         if not self.__flag and self.__accumulator == 0:
-            self.branch(k)
+            self.__branch(k)
 
     def __branch_ifpositive(self, k):
         """
             Branch if positive of the program counter. 
         """
         if not self.__flag:
-            self.branch(k)
+            self.__branch(k)
     
     def __input(self):
         """
@@ -229,7 +230,7 @@ class myLMC():
         """
         self.__working = False
     
-    def work(self, verbose = False, slow = False):
+    def work(self, verbose = False, slow = False, one_step = False):
         """
 
             Core method of the Little Man Computer. It performs the simulation 
@@ -243,6 +244,8 @@ class myLMC():
         while self.__working:
             if slow:
                 time.sleep(0.5)
+            if one_step:
+                keep = input()
             instruction = self.__memory[self.__program_counter]
             radix = instruction//100
             index = instruction%100

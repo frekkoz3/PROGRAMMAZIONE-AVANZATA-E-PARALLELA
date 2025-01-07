@@ -1,9 +1,10 @@
-class BadOperandException(Exception):
-    pass
+"""
+    Francesco Bredariol SM3201379
+    Programmazione Avanzata e Parallela - Progetto Python
+    Anno 2024-2025
+"""
 
-class IllegalOperationException(Exception):
-    pass
-
+from excpts import *
 from lmc import Memory
 
 class OperationsTranslator():
