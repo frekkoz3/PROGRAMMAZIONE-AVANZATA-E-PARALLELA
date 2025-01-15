@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -O3 -Wall -std=c17 -pedantic -D_XOPEN_SOURCE=500 -fopenmp
+CFLAGS = -O3 -Wall -std=c17 -pedantic -fopenmp
 HEADERS = ${wildcards *.h}
 
 all: main
